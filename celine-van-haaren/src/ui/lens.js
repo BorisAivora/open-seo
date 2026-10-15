@@ -19,8 +19,8 @@ export function initLenses(stage) {
 
     if (stage) stage.add(el, { lens });
 
-    const fullRadius = () => Math.min(180, rect.width * 0.26);
-    const idleRadius = () => Math.min(110, rect.width * 0.16);
+    const fullRadius = () => Math.min(180, rect.width * 0.34);
+    const idleRadius = () => Math.min(110, rect.width * 0.26);
 
     const toLocal = (e) => {
       rect = el.getBoundingClientRect();

@@ -43,6 +43,7 @@
 
 /* ── Base ─────────────────────────────────────────────────────────────── */
 html {
+  overflow-x: clip;
   background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -753,14 +754,17 @@ main {
   height: 100%;
   object-fit: cover;
 }
-/* Without WebGL the lens is a CSS clip-path circle over a drawing-like filter. */
+/* Without WebGL (phones, reduced motion) the lens is a soft-edged CSS mask over a pale,
+   drawing-like version of the photo with a faint construction grid. */
 .lens__fallback {
   position: absolute;
   inset: 0;
-  background-size: cover;
+  background-size: 28px 28px, 28px 28px, cover;
   background-position: center;
-  filter: grayscale(1) contrast(1.6) brightness(1.18) sepia(0.25);
-  clip-path: circle(var(--lr, 0px) at var(--lx, 50%) var(--ly, 50%));
+  filter: grayscale(1) sepia(0.15) contrast(0.6) brightness(1.55);
+  -webkit-mask-image: radial-gradient(circle at var(--lx, 50%) var(--ly, 50%), #000 calc(var(--lr, 0px) * 0.86), transparent var(--lr, 0px));
+  mask-image: radial-gradient(circle at var(--lx, 50%) var(--ly, 50%), #000 calc(var(--lr, 0px) * 0.86), transparent var(--lr, 0px));
+  will-change: mask-image;
 }
 .has-gl .lens__fallback {
   display: none;
@@ -928,6 +932,7 @@ main {
   position: absolute;
   inset: 0;
   z-index: -1;
+  overflow: hidden;
   pointer-events: none;
 }
 /* A wall sconce: a small brass fixture with warm light washing up and down the wall. */
@@ -1720,4 +1725,12 @@ main {
 }
 .kb-grid--compact .kb-card__title {
   font-size: clamp(24px, 1.9vw, 30px);
+}
+
+/* Touch screens and small screens: drop the blurred window shadow, the most expensive
+   layer to repaint while scrolling. The evening tint stays. */
+@media (hover: none), (max-width: 899px) {
+  .daylight__window {
+    display: none;
+  }
 }

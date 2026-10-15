@@ -17,16 +17,19 @@ window.__cvhReady = true;
 initScroll();
 initTimeOfDay();
 
-// Under reduced motion the photographs stay plain <img> elements.
-const stage = state.reduced ? null : createStage(document.querySelector('[data-gl-canvas]'));
+// Phones and touch screens skip WebGL: the hover shader needs a mouse, plain <img> elements
+// keep scrolling smooth on mobile GPUs, and the lens uses its CSS version. Reduced motion
+// skips it too.
+const lite = state.reduced || !state.finePointer || matchMedia('(max-width: 899px)').matches;
+const stage = lite ? null : createStage(document.querySelector('[data-gl-canvas]'));
 if (stage) {
   for (const img of document.querySelectorAll('img[data-gl]')) {
     const item = stage.add(img);
     if (img.closest('[data-hero-media]')) item.revealDelay = 0.35;
   }
-  // The stage renders after Lenis has moved the page, in the same tick.
-  gsap.ticker.add(stage.render);
 }
+// The stage renders after Lenis has moved the page, in the same tick.
+if (stage) gsap.ticker.add(stage.render);
 
 initLenses(stage);
 initCursor();

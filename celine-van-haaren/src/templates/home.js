@@ -184,13 +184,14 @@ export function faqList(items) {
 // The Lens Reveal: WebGL draws the finished room with a soft circular lens that shows the
 // same space as a hand-drawn design. A project with a `before` image swaps the drawing for it.
 export function lensFigure(project, image, lang) {
+  const grid = 'linear-gradient(rgb(156 122 84 / 0.16) 1px, transparent 1px),linear-gradient(90deg, rgb(156 122 84 / 0.16) 1px, transparent 1px)';
   const s = t[lang].lens;
   const before = project.before != null ? project.images[project.before].src : '';
   return `
     <figure class="lens" data-lens data-lens-src="${image.src}" data-lens-before="${before}" data-cursor="lens" style="aspect-ratio:${image.w}/${image.h}">
       <img src="${image.sm}" srcset="${image.sm} 900w, ${image.src} 1800w" sizes="(min-width: 1024px) 60vw, 100vw"
         width="${image.w}" height="${image.h}" alt="${esc(`${project.title} — ${project.location[lang]}`)}" loading="lazy" decoding="async">
-      <span class="lens__fallback" aria-hidden="true" style="background-image:url(${image.sm})"></span>
+      <span class="lens__fallback" aria-hidden="true" style="background-image:${grid},url(${image.sm})"></span>
       <figcaption class="lens__labels" aria-hidden="true">
         <span>${before ? s.after : s.outside}</span><span class="lens__inside" data-lens-label>${before ? s.before : s.inside}</span>
       </figcaption>
