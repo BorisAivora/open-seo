@@ -132,3 +132,51 @@ export function initQuotes() {
     }),
   );
 }
+
+// The request form: posts in the background and answers inline, so the visitor never leaves
+// the page. On failure it points to the direct contact details next to the form.
+export function initContactForms() {
+  for (const form of document.querySelectorAll('[data-contact-form]')) {
+    const status = form.querySelector('.contact-form__status');
+    const button = form.querySelector('button[type="submit"]');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const label = button.textContent;
+      button.disabled = true;
+      button.textContent = button.dataset.sending;
+      status.classList.remove('is-error');
+      try {
+        const res = await fetch(form.dataset.endpoint || '/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(new FormData(form)).toString(),
+        });
+        if (!res.ok) throw new Error(res.status);
+        status.textContent = status.dataset.success;
+        form.reset();
+        window.dispatchEvent(new CustomEvent('cvh:lead', { detail: { form: form.name } }));
+      } catch {
+        status.textContent = status.dataset.error;
+        status.classList.add('is-error');
+      } finally {
+        button.disabled = false;
+        button.textContent = label;
+      }
+    });
+  }
+}
+
+// Mobile: a fixed "plan a call" button appears once the hero's own CTA has scrolled away
+// and steps aside again when the contact section is on screen.
+export function initStickyCta() {
+  const button = document.querySelector('[data-sticky-cta]');
+  const contactEl = document.querySelector('#contact');
+  if (!button || !contactEl) return;
+  const update = () => {
+    const past = window.scrollY > window.innerHeight * 0.8;
+    const atContact = contactEl.getBoundingClientRect().top < window.innerHeight * 0.9;
+    button.classList.toggle('is-visible', past && !atContact);
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+}

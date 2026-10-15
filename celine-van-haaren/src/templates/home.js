@@ -7,6 +7,8 @@ const materials = {
   en: ['Travertine', 'Oak', 'Warm marble', 'Bronze', 'Linen', 'Natural stone', 'Lime paint'],
 };
 
+// Homepage, ordered as a conversion page: promise and CTA above the fold, recognition,
+// proof (projects, reviews), how it works, objections, the person, then the request form.
 export function home(lang) {
   const s = t[lang];
   const r = routes[lang];
@@ -22,23 +24,29 @@ export function home(lang) {
     <div class="hero__text">
       <p class="eyebrow" data-hero-fade>${s.hero.eyebrow}</p>
       <h1 class="display hero__title" data-hero-title>
-        <span class="hero__line"><span>${s.hero.line1}</span></span>
-        <span class="hero__line"><span><em>${s.hero.line2}</em></span></span>
-        <span class="hero__line"><span>${s.hero.line3}</span></span>
+        ${s.hero.lines.map((l) => `<span class="hero__line"><span>${l}</span></span>`).join('')}
       </h1>
-      <p class="hero__caption" data-hero-fade>${s.hero.caption}</p>
+      <p class="hero__sub" data-hero-fade>${s.hero.sub}</p>
+      <div class="cta-row" data-hero-fade>
+        <a href="#contact" class="btn btn--primary" data-cta="hero">${s.hero.cta}</a>
+        <a href="${r.projects}" class="btn btn--ghost">${s.hero.secondary}</a>
+      </div>
+      <p class="cta-note" data-hero-fade>${s.hero.reassure}</p>
+      <figure class="hero__proof" data-hero-fade>
+        <blockquote>${s.hero.proof}</blockquote>
+        <figcaption>${s.hero.proofWho}</figcaption>
+      </figure>
     </div>
     <a href="${r.project(hero.slug)}" class="hero__media" data-cursor="${s.selected.view}" data-hero-media>
-      ${media(hero.images[hero.cover], { alt: `${hero.title} — ${hero.location[lang]}`, eager: true, sizes: '(min-width: 1024px) 55vw, 100vw' })}
+      ${media(hero.images[hero.cover], { alt: `${hero.title}, ${hero.location[lang]}`, eager: true, sizes: '(min-width: 1024px) 45vw, 100vw' })}
       <span class="media-caption"><span>${hero.title}</span><span>${hero.location[lang]}</span></span>
     </a>
   </div>
-  <div class="hero__scroll" data-hero-fade aria-hidden="true"><span>${s.hero.scroll}</span><i></i></div>
 </section>
 
 <section class="intro" data-tod="morning">
   <div class="container">
-    <p class="statement" data-words>${s.intro}</p>
+    <p class="statement" data-words>${s.recognition}</p>
   </div>
 </section>
 
@@ -59,7 +67,7 @@ export function home(lang) {
           (p, i) => `
       <li class="work-item work-item--${i + 1}">
         <a href="${r.project(p.slug)}" class="work-card" data-cursor="${s.selected.view}">
-          ${media(p.images[p.cover], { alt: `${p.title} — ${p.location[lang]}`, sizes: '(min-width: 1024px) 40vw, 100vw' })}
+          ${media(p.images[p.cover], { alt: `${p.title}, ${p.location[lang]}`, sizes: '(min-width: 1024px) 40vw, 100vw' })}
           <span class="work-card__meta" data-reveal>
             <span class="work-card__num">${String(i + 1).padStart(2, '0')}</span>
             <span class="work-card__title">${p.title}</span>
@@ -73,19 +81,30 @@ export function home(lang) {
   </div>
 </section>
 
-<section class="lens-section" data-tod="noon" aria-labelledby="lens-title">
-  <div class="container lens-section__grid">
-    <div class="lens-section__text">
-      <p class="eyebrow" data-reveal>${s.lens.eyebrow}</p>
-      <h2 class="display lens-section__title" id="lens-title" data-split>${s.lens.title}</h2>
-      <p class="body-text" data-reveal>${s.lens.body}</p>
-      <p class="lens-section__hint" data-reveal><i></i>${s.lens.hint}</p>
+<section class="reviews" data-tod="noon" aria-labelledby="reviews-title">
+  <div class="container">
+    <div class="section-head section-head--center">
+      <p class="eyebrow" data-reveal>${s.quotesHead.eyebrow}</p>
+      <h2 class="display section-head__title" id="reviews-title" data-split>${s.quotesHead.title}</h2>
     </div>
-    ${lensFigure(lensProject, lensImage, lang)}
+    <div class="quotes" data-quotes>
+      ${s.quotes
+        .map(
+          ([q, who], i) => `
+      <figure class="quote${i === 0 ? ' is-active' : ''}" data-quote>
+        <blockquote><p>“${esc(q)}”</p></blockquote>
+        <figcaption>${who}</figcaption>
+      </figure>`,
+        )
+        .join('')}
+      <div class="quotes__dots">
+        ${s.quotes.map((_, i) => `<button type="button" class="quotes__dot${i === 0 ? ' is-active' : ''}" aria-label="Review ${i + 1}" data-quote-dot></button>`).join('')}
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="process" data-tod="afternoon" aria-labelledby="process-title">
+<section class="process" id="werkwijze" data-tod="afternoon" aria-labelledby="process-title">
   <div class="container">
     <div class="section-head">
       <p class="eyebrow" data-reveal>${s.process.eyebrow}</p>
@@ -103,6 +122,32 @@ export function home(lang) {
         )
         .join('')}
     </ol>
+    <div class="cta-row cta-row--section" data-reveal>
+      <a href="#contact" class="btn btn--primary" data-cta="process">${s.hero.cta}</a>
+      <p class="cta-note">${s.hero.reassure}</p>
+    </div>
+  </div>
+</section>
+
+<section class="lens-section" data-tod="afternoon" aria-labelledby="lens-title">
+  <div class="container lens-section__grid">
+    <div class="lens-section__text">
+      <p class="eyebrow" data-reveal>${s.lens.eyebrow}</p>
+      <h2 class="display lens-section__title" id="lens-title" data-split>${s.lens.title}</h2>
+      <p class="body-text" data-reveal>${s.lens.body}</p>
+      <p class="lens-section__hint" data-reveal><i></i>${s.lens.hint}</p>
+    </div>
+    ${lensFigure(lensProject, lensImage, lang)}
+  </div>
+</section>
+
+<section class="faq" data-tod="afternoon" aria-labelledby="faq-title">
+  <div class="container faq__grid">
+    <div>
+      <p class="eyebrow" data-reveal>${s.faq.eyebrow}</p>
+      <h2 class="display faq__title" id="faq-title" data-split>${s.faq.title}</h2>
+    </div>
+    ${faqList(s.faq.items)}
   </div>
 </section>
 
@@ -117,23 +162,23 @@ export function home(lang) {
       ${s.studio.body.map((p) => `<p class="body-text" data-reveal>${p}</p>`).join('')}
     </div>
   </div>
-  <div class="container quotes" data-quotes>
-    ${s.quotes
-      .map(
-        ([q, who], i) => `
-    <figure class="quote${i === 0 ? ' is-active' : ''}" data-quote>
-      <blockquote><p>“${esc(q)}”</p></blockquote>
-      <figcaption>— ${who}</figcaption>
-    </figure>`,
-      )
-      .join('')}
-    <div class="quotes__dots" role="tablist">
-      ${s.quotes.map((_, i) => `<button type="button" class="quotes__dot${i === 0 ? ' is-active' : ''}" aria-label="${i + 1}" data-quote-dot></button>`).join('')}
-    </div>
-  </div>
 </section>
 
 ${contactSection(lang)}`;
+}
+
+export function faqList(items) {
+  return `<div class="faq__list">
+      ${items
+        .map(
+          ([q, a]) => `
+      <details class="faq__item" data-reveal>
+        <summary>${q}<i aria-hidden="true"></i></summary>
+        <p>${a}</p>
+      </details>`,
+        )
+        .join('')}
+    </div>`;
 }
 
 // The Lens Reveal: WebGL draws the finished room with a soft circular lens that shows the

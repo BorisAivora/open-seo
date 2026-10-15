@@ -50,7 +50,7 @@ export function projectPage(lang, project) {
   const [cover, ...rest] = [project.images[project.cover], ...project.images.filter((_, i) => i !== project.cover)];
   const gallery = rest.filter((img) => img !== project.images[project.lens]);
   const paragraphs = project.body?.[lang] ?? [s.project.fallback];
-  const alt = `${project.title} — ${project.location[lang]}`;
+  const alt = `${project.title}, ${project.location[lang]}`;
 
   // Pair the gallery into rows: a landscape image takes a full row, portraits sit side by side.
   const rows = [];
@@ -117,6 +117,17 @@ export function projectPage(lang, project) {
         .slice(2)
         .map((row) => `<div class="gallery__row gallery__row--${row.length}">${row.map((img) => media(img, { alt, sizes: row.length === 2 ? '50vw' : '100vw' })).join('')}</div>`)
         .join('')}
+    </div>
+  </section>
+
+  <section class="project-cta" data-tod="afternoon">
+    <div class="container project-cta__inner">
+      <h2 class="display project-cta__title" data-split>${s.project.ctaTitle}</h2>
+      <p class="body-text" data-reveal>${s.project.ctaBody}</p>
+      <div class="cta-row" data-reveal>
+        <a href="#contact" class="btn btn--primary" data-cta="project">${s.hero.cta}</a>
+        <p class="cta-note">${s.hero.reassure}</p>
+      </div>
     </div>
   </section>
 

@@ -1,0 +1,18 @@
+# Old celinevanhaaren.com URLs → new URLs (Netlify format; other hosts need their own equivalent)
+/projecten/project-xx/      /projecten/xx/      301
+/projecten/project-xxix/    /projecten/xxix/    301
+/projecten/project-xxii/    /projecten/xxii/    301
+/projecten/project-iii/     /projecten/iii/     301
+/projecten/project-xix/     /projecten/xix/     301
+/projecten/project-viii/    /projecten/viii/    301
+/projecten/project-xviii/   /projecten/xviii/   301
+/projecten/1250/            /projecten/xfv/     301
+/projecten/project-xmv/     /projecten/xmc/     301
+/projecten/project-ivii/    /projecten/ivii/    301
+/projecten/projectxv/       /projecten/xv/      301
+/projecten/project-ii/      /projecten/ii/      301
+/projecten/project-xvi/     /projecten/xvi/     301
+/projecten/project-vvx/     /projecten/vvx/     301
+/projecten/project-mxi/     /projecten/mxi/     301
+/over/                      /#studio            301
+/contact/                   /#contact           301

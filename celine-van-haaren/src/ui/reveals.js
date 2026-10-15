@@ -63,9 +63,11 @@ export function playIntro() {
     gsap.set('[data-hero-fade]', { opacity: 1 });
     return;
   }
+  const lines = gsap.utils.toArray('[data-hero-title] .hero__line > span');
+  const fades = gsap.utils.toArray('[data-hero-fade]');
   const tl = gsap.timeline();
-  tl.fromTo('[data-hero-title] .hero__line > span', { yPercent: 110, y: 0 }, { yPercent: 0, duration: 2, ease: 'expo.out', stagger: 0.14 }, 0.1);
-  tl.fromTo('[data-hero-fade]', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 1.6, ease: 'power3.out', stagger: 0.1 }, 0.7);
+  if (lines.length) tl.fromTo(lines, { yPercent: 110, y: 0 }, { yPercent: 0, duration: 2, ease: 'expo.out', stagger: 0.14 }, 0.1);
+  if (fades.length) tl.fromTo(fades, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 1.6, ease: 'power3.out', stagger: 0.1 }, 0.7);
 }
 
 // The material words drift sideways, a touch faster while the page is being scrolled.

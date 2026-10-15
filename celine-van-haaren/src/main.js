@@ -8,7 +8,7 @@ import { initTimeOfDay } from './ui/timeOfDay.js';
 import { initLenses } from './ui/lens.js';
 import { initCursor } from './ui/cursor.js';
 import { initMarquee, initReveals, playIntro } from './ui/reveals.js';
-import { initHeader, initQuotes, initTransitions, runPreloader } from './ui/site.js';
+import { initContactForms, initHeader, initQuotes, initStickyCta, initTransitions, runPreloader } from './ui/site.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 // Tells the inline failsafe in <head> that the scripts are running (see templates/layout.js).
@@ -32,6 +32,8 @@ initLenses(stage);
 initCursor();
 initHeader();
 initQuotes();
+initContactForms();
+initStickyCta();
 initTransitions();
 initMarquee();
 
