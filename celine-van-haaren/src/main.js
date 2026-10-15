@@ -11,6 +11,8 @@ import { initMarquee, initReveals, playIntro } from './ui/reveals.js';
 import { initHeader, initQuotes, initTransitions, runPreloader } from './ui/site.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
+// Tells the inline failsafe in <head> that the scripts are running (see templates/layout.js).
+window.__cvhReady = true;
 
 initScroll();
 initTimeOfDay();

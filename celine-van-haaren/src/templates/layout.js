@@ -108,7 +108,7 @@ export function layout({ lang, path, alternate, title, description, body, image 
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#F6F2EC">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <script>(function(d){d.classList.replace('no-js','js');try{if(sessionStorage.getItem('cvh-visited'))d.classList.add('is-return');if(sessionStorage.getItem('cvh-transition')){sessionStorage.removeItem('cvh-transition');d.classList.add('from-transition')}}catch(e){}})(document.documentElement)</script>
+  <script>(function(d){d.classList.replace('no-js','js');try{if(sessionStorage.getItem('cvh-visited'))d.classList.add('is-return');if(sessionStorage.getItem('cvh-transition')){sessionStorage.removeItem('cvh-transition');d.classList.add('from-transition')}}catch(e){}setTimeout(function(){if(!window.__cvhReady){d.classList.remove('js','is-return','from-transition');d.classList.add('no-js')}},4000)})(document.documentElement)</script>
   <link rel="stylesheet" href="/src/styles/main.css">
   <script type="module" src="/src/main.js"></script>
 </head>
