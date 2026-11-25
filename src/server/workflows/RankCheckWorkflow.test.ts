@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
   runLiveCheck: vi.fn(),
   failRunIfActive: vi.fn(),
   captureServerEvent: vi.fn(),
-  isHostedServerAuthMode: vi.fn(),
+  isHostedBillingEnabled: vi.fn(),
 }));
 
 vi.mock("cloudflare:workers", () => ({
@@ -56,7 +56,7 @@ vi.mock("@/server/billing/autumn", () => ({
   autumn: { check: mocks.autumnCheck },
 }));
 vi.mock("@/server/lib/runtime-env", () => ({
-  isHostedServerAuthMode: mocks.isHostedServerAuthMode,
+  isHostedBillingEnabled: mocks.isHostedBillingEnabled,
 }));
 
 const billingCustomer = {
@@ -75,7 +75,7 @@ describe("rank check workflow credit ceiling", () => {
   beforeEach(() => {
     mocks.getRunById.mockResolvedValue(activeRun);
     mocks.updateRun.mockResolvedValue(undefined);
-    mocks.isHostedServerAuthMode.mockResolvedValue(true);
+    mocks.isHostedBillingEnabled.mockResolvedValue(true);
     mocks.autumnCheck.mockResolvedValue({ balance: { remaining: 1_000 } });
   });
 
@@ -148,7 +148,7 @@ describe("rank check workflow credit ceiling", () => {
         keyword: `keyword ${index}`,
       })),
     );
-    mocks.isHostedServerAuthMode.mockResolvedValue(false);
+    mocks.isHostedBillingEnabled.mockResolvedValue(false);
 
     const result = await prepareRankCheckKeywords({
       runId: "run_1",
@@ -181,7 +181,7 @@ describe("rank check finalization", () => {
     );
     mocks.getSnapshotsForRun.mockResolvedValue([]);
     mocks.updateRun.mockResolvedValue(undefined);
-    mocks.isHostedServerAuthMode.mockResolvedValue(true);
+    mocks.isHostedBillingEnabled.mockResolvedValue(true);
     mocks.autumnCheck.mockResolvedValue({ balance: { remaining: 1_000 } });
   });
 

@@ -14,12 +14,12 @@ interface TrackCallArg {
   properties?: { balanceFeatureId: string };
 }
 
-const { checkMock, trackMock, getOrCreateMock, isHostedServerAuthModeMock } =
+const { checkMock, trackMock, getOrCreateMock, isHostedBillingEnabledMock } =
   vi.hoisted(() => ({
     checkMock: vi.fn(),
     trackMock: vi.fn<(arg: TrackCallArg) => void>(),
     getOrCreateMock: vi.fn(),
-    isHostedServerAuthModeMock: vi.fn(),
+    isHostedBillingEnabledMock: vi.fn(),
   }));
 
 vi.mock("cloudflare:workers", () => ({
@@ -46,7 +46,7 @@ vi.mock("@/server/billing/subscription", async (importOriginal) => {
 });
 
 vi.mock("@/server/lib/runtime-env", () => ({
-  isHostedServerAuthMode: isHostedServerAuthModeMock,
+  isHostedBillingEnabled: isHostedBillingEnabledMock,
 }));
 
 vi.mock("@/server/lib/posthog", () => ({
@@ -118,7 +118,7 @@ const backlinksInput = {
 };
 
 function setupHostedMode() {
-  isHostedServerAuthModeMock.mockResolvedValue(true);
+  isHostedBillingEnabledMock.mockResolvedValue(true);
   getOrCreateMock.mockResolvedValue({ id: "org_123" });
 }
 
@@ -147,7 +147,7 @@ describe("meterDataforseoCall with split balances", () => {
   });
 
   it("skips billing in non-hosted mode", async () => {
-    isHostedServerAuthModeMock.mockResolvedValue(false);
+    isHostedBillingEnabledMock.mockResolvedValue(false);
     mockDataforseoResult(0.05);
 
     const client = createDataforseoClient(billingCustomer);

@@ -324,15 +324,14 @@ export class SamChatAgent extends Think {
         );
       }
 
-      // Gate every turn on credits in hosted mode: SAM is open to every plan
-      // (including free), and LLM tokens plus DataForSEO tool calls all draw
-      // down the org's credit balance. Self-hosted brings its own provider
-      // keys and has no Autumn balance, so it's ungated. Depletion is
-      // confirmed against a second Autumn read path before refusing — a
-      // stale check reading here once locked a paying customer out of chat.
+      // Gate every turn on credits when billing is on: LLM tokens and
+      // DataForSEO tool calls draw down the org's credit balance (every plan,
+      // free included). Self-hosted brings its own keys, so it's ungated.
+      // Depletion is confirmed against a second Autumn read path before
+      // refusing — a stale read once locked a paying customer out of chat.
       const { organizationId } = ctx.project;
       const hosted = await isHostedServerAuthMode();
-      if (hosted) {
+      if (hosted && getEnvValueSync(this.env, "OPENSEO_SELFHOST") !== "true") {
         const { depleted, monthlyRemaining } = await checkUsageCreditsDepleted({
           userId: ctx.row.userId,
           userEmail: ctx.userEmail,

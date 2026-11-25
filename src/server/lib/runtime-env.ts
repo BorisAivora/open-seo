@@ -1,4 +1,4 @@
-import { isHostedAuthMode } from "@/lib/auth-mode";
+import { isHostedAuthMode, isSelfHostValue } from "@/lib/auth-mode";
 
 let workersEnvPromise: Promise<Record<string, unknown> | null> | null = null;
 
@@ -39,6 +39,16 @@ export async function getRequiredEnvValue(name: string): Promise<string> {
 
 export async function isHostedServerAuthMode(): Promise<boolean> {
   return isHostedAuthMode(await getOptionalEnvValue("AUTH_MODE"));
+}
+
+/**
+ * Hosted mode with Autumn billing. False on a self-hosted deploy that runs
+ * hosted auth (OPENSEO_SELFHOST=true): there DataForSEO/LLM spend is the
+ * operator's own and no plan or credit checks apply.
+ */
+export async function isHostedBillingEnabled(): Promise<boolean> {
+  if (!(await isHostedServerAuthMode())) return false;
+  return !isSelfHostValue(await getOptionalEnvValue("OPENSEO_SELFHOST"));
 }
 
 async function getWorkersEnv(): Promise<Record<string, unknown> | null> {

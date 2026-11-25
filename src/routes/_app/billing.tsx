@@ -2,7 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useCustomer } from "autumn-js/react";
 import { useState } from "react";
 import { useSession } from "@/lib/auth-client";
-import { isHostedClientAuthMode } from "@/lib/auth-mode";
+import { isHostedBillingClientMode } from "@/lib/auth-mode";
 import { useCanManageBilling } from "@/client/features/team/organizationQueries";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
@@ -26,7 +26,7 @@ import {
 
 export const Route = createFileRoute("/_app/billing")({
   beforeLoad: () => {
-    if (!isHostedClientAuthMode()) {
+    if (!isHostedBillingClientMode()) {
       throw notFound();
     }
   },

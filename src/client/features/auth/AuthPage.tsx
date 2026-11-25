@@ -3,7 +3,7 @@ import {
   getCurrentAuthRedirect,
   getOAuthSignedQuery,
 } from "@/lib/auth-redirect";
-import { isHostedClientAuthMode } from "@/lib/auth-mode";
+import { isHostedClientAuthMode, isSelfHostValue } from "@/lib/auth-mode";
 
 export const authRedirectSearchSchema = z.object({
   redirect: z.string().optional(),
@@ -39,17 +39,22 @@ export function AuthMethodChooser({
   onContinueWithGoogle: () => void;
   onContinueWithEmail: () => void;
 }) {
+  // Self-hosted hosted-auth deploys may run email/password only.
+  const showGoogle = !isSelfHostValue(import.meta.env.OPENSEO_SELFHOST);
+
   return (
     <div className="space-y-3">
-      <button
-        type="button"
-        className="btn w-full border border-black/10 bg-white text-neutral-900 hover:border-black/20 hover:bg-neutral-50 disabled:bg-white disabled:text-neutral-500 disabled:opacity-70"
-        onClick={onContinueWithGoogle}
-        disabled={disabled || isBusy}
-      >
-        <GoogleLogo />
-        {isBusy ? "Opening Google..." : googleLabel}
-      </button>
+      {showGoogle ? (
+        <button
+          type="button"
+          className="btn w-full border border-black/10 bg-white text-neutral-900 hover:border-black/20 hover:bg-neutral-50 disabled:bg-white disabled:text-neutral-500 disabled:opacity-70"
+          onClick={onContinueWithGoogle}
+          disabled={disabled || isBusy}
+        >
+          <GoogleLogo />
+          {isBusy ? "Opening Google..." : googleLabel}
+        </button>
+      ) : null}
 
       <button
         type="button"

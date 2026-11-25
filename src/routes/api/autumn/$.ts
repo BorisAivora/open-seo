@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type { autumnHandler } from "autumn-js/fetch";
 import { env } from "cloudflare:workers";
-import { isHostedAuthMode } from "@/lib/auth-mode";
+import { isHostedAuthMode, isSelfHostValue } from "@/lib/auth-mode";
 import { hasOrgPermission } from "@/lib/org-permissions";
 import { resolveHostedContext } from "@/middleware/ensure-user/hosted";
 import type { EnsuredUserContext } from "@/middleware/ensure-user/types";
@@ -53,7 +53,10 @@ function loadHandler() {
 }
 
 async function handleAutumnRequest(request: Request) {
-  if (!isHostedAuthMode(env.AUTH_MODE)) {
+  if (
+    !isHostedAuthMode(env.AUTH_MODE) ||
+    isSelfHostValue(Reflect.get(env, "OPENSEO_SELFHOST"))
+  ) {
     return new Response("Not found", {
       status: 404,
     });

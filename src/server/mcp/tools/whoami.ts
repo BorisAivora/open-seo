@@ -5,7 +5,7 @@ import {
 } from "@/shared/billing";
 import { mcpResponse } from "@/server/mcp/formatters";
 import { type ToolContext } from "@/server/mcp/context";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
+import { isHostedBillingEnabled } from "@/server/lib/runtime-env";
 import { optionalMetaOutputSchema } from "@/server/mcp/output-schemas";
 import { z } from "zod";
 
@@ -40,7 +40,7 @@ export const whoamiTool = {
   },
   handler: async (_args: Record<string, never>, context: ToolContext) => {
     const auth = context.auth;
-    const isHosted = await isHostedServerAuthMode();
+    const isHosted = await isHostedBillingEnabled();
     let creditsRemaining: number | null = null;
     if (isHosted) {
       const [base, topup] = await Promise.all([

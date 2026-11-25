@@ -9,7 +9,7 @@ import { SamSessionRepository } from "@/server/features/sam/SamSessionRepository
 import { runScheduledRankChecks } from "@/server/features/rank-tracking/services/scheduledRankChecks";
 import { reconcileStaleAudits } from "@/server/features/audit/services/auditReconciler";
 import { getOrCreateOrganizationCustomer } from "@/server/billing/subscription";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
+import { isHostedBillingEnabled } from "@/server/lib/runtime-env";
 import { getAuthMode, isHostedAuthMode } from "@/lib/auth-mode";
 import {
   createOpenSeoOAuthProvider,
@@ -95,7 +95,7 @@ async function authorizeSamChat(
   // Make sure the Autumn customer (and its default free-plan credits) exists
   // before the DO's balance gate runs, or a brand-new org's first message hits
   // a false "out of credits". Hosted-only; self-hosted has no Autumn.
-  if (await isHostedServerAuthMode()) {
+  if (await isHostedBillingEnabled()) {
     await getOrCreateOrganizationCustomer(context);
   }
   return undefined;

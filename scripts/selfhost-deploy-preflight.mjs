@@ -51,7 +51,30 @@ if (!env.DATAFORSEO_API_KEY) {
 // When both are set, the deploy provisions no Access resources (hand-managed
 // application) and needs neither ACCESS_ALLOWED_EMAILS nor the access:write
 // login scope.
-const managedAccess = !(env.TEAM_DOMAIN && env.POLICY_AUD);
+// AUTH_MODE=hosted (OPENSEO_SELFHOST=true) uses its own password login and
+// provisions no Access application at all.
+const hostedSelfHost = env.AUTH_MODE === "hosted";
+if (hostedSelfHost) {
+  if (env.OPENSEO_SELFHOST !== "true") {
+    fail(
+      `AUTH_MODE=hosted on self-host needs ${em("OPENSEO_SELFHOST=true")} (turns off managed-service billing).`,
+    );
+  }
+  const missing = [
+    "BETTER_AUTH_SECRET",
+    "WORKERS_SUBDOMAIN",
+    "SIGNUP_ALLOWED_EMAILS",
+  ].filter((name) => !env[name]);
+  if (missing.length > 0) {
+    fail(
+      `AUTH_MODE=hosted needs ${missing.map((n) => em(n)).join(", ")} in ${envFile}.`,
+    );
+  }
+  if (env.BETTER_AUTH_SECRET.length < 32) {
+    fail(`${em("BETTER_AUTH_SECRET")} must be at least 32 characters.`);
+  }
+}
+const managedAccess = !hostedSelfHost && !(env.TEAM_DOMAIN && env.POLICY_AUD);
 if (managedAccess && !env.ACCESS_ALLOWED_EMAILS) {
   fail(
     `${em("ACCESS_ALLOWED_EMAILS")} is not set in ${envFile} — list who may sign in through`,

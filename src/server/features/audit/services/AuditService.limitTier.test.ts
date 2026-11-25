@@ -14,7 +14,7 @@ const {
 
 vi.mock("cloudflare:workers", () => ({ env: {} }));
 vi.mock("@/server/lib/runtime-env", () => ({
-  isHostedServerAuthMode: isHostedMock,
+  isHostedBillingEnabled: isHostedMock,
 }));
 vi.mock("@/server/billing/subscription", () => ({
   customerHasManagedAccess: hasManagedAccessMock,

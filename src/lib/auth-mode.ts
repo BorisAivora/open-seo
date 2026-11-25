@@ -42,6 +42,22 @@ export function isHostedClientAuthMode() {
   return isHostedAuthMode(import.meta.env.AUTH_MODE);
 }
 
+/**
+ * Self-hosted deploy running hosted (email/password + MCP OAuth) auth.
+ * Autumn billing is off and Google sign-in is optional in that setup.
+ */
+export function isSelfHostValue(value: string | null | undefined) {
+  return value === "true";
+}
+
+/** Client: hosted mode WITH the managed-service billing (Autumn). */
+export function isHostedBillingClientMode() {
+  return (
+    isHostedClientAuthMode() &&
+    !isSelfHostValue(import.meta.env.OPENSEO_SELFHOST)
+  );
+}
+
 export function isEmailVerificationBypassed() {
   // Local-dev escape hatch (BYPASS_EMAIL_VERIFICATION=true). The server skips
   // verification and never marks users emailVerified, so the client must treat

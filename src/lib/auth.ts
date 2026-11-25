@@ -11,7 +11,7 @@ import { pgDb } from "@/db/pg/client";
 import * as pgSchema from "@/db/pg/schema";
 import { getDatabaseProvider } from "@/db/provider";
 import { z } from "zod";
-import { isHostedAuthMode } from "@/lib/auth-mode";
+import { isHostedAuthMode, isSelfHostValue } from "@/lib/auth-mode";
 import { createApiKeyPlugin } from "@/lib/auth-api-key";
 import { createBaseAuthConfig } from "@/lib/auth-config";
 import {
@@ -223,6 +223,17 @@ function createAuth() {
                 message: "Please sign up with a non-disposable email address.",
               });
             }
+            // Self-host on hosted auth: billing is off, so every account
+            // spends the operator's DataForSEO balance. Only allowlisted
+            // emails may sign up; an empty list closes sign-up entirely.
+            if (
+              isSelfHostValue(Reflect.get(env, "OPENSEO_SELFHOST")) &&
+              !isSelfHostSignupAllowed(user.email)
+            ) {
+              throw new APIError("FORBIDDEN", {
+                message: "Sign-up is restricted on this OpenSEO instance.",
+              });
+            }
             return { data: user };
           },
           after: async (user, ctx) => {
@@ -338,9 +349,30 @@ function getSocialProviders() {
     return {};
   }
 
+  // A self-hosted deploy on hosted auth may run email/password only.
+  if (isSelfHostGoogleSignInOff()) {
+    return {};
+  }
+
   return {
     google: getGoogleSocialProviderConfig(),
   };
+}
+
+function isSelfHostSignupAllowed(email: string) {
+  const raw: unknown = Reflect.get(env, "SIGNUP_ALLOWED_EMAILS");
+  const allowed = (typeof raw === "string" ? raw : "")
+    .split(",")
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+  return allowed.includes(email.trim().toLowerCase());
+}
+
+function isSelfHostGoogleSignInOff() {
+  return (
+    isSelfHostValue(Reflect.get(env, "OPENSEO_SELFHOST")) &&
+    !(env.GOOGLE_CLIENT_ID?.trim() && env.GOOGLE_CLIENT_SECRET?.trim())
+  );
 }
 
 function getGoogleSocialProviderConfig() {
@@ -381,7 +413,7 @@ export function hasHostedAuthConfig() {
   try {
     getHostedBaseUrl();
     getHostedSecret();
-    getGoogleSocialProviderConfig();
+    if (!isSelfHostGoogleSignInOff()) getGoogleSocialProviderConfig();
     return (
       hasHostedTurnstileConfig(env) &&
       (Reflect.get(env, "BYPASS_EMAIL_VERIFICATION") === "true" ||

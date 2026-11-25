@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import {
   getOptionalEnvValue,
-  isHostedServerAuthMode,
+  isHostedBillingEnabled,
 } from "@/server/lib/runtime-env";
 import { requireProjectContext } from "@/serverFunctions/middleware";
 
@@ -23,7 +23,7 @@ export const getSamAccessSetupStatus = createServerFn({ method: "GET" })
   .middleware(requireProjectContext)
   .validator(projectScopedSchema)
   .handler(async (): Promise<SamAccessStatus> => {
-    if (await isHostedServerAuthMode()) {
+    if (await isHostedBillingEnabled()) {
       return { enabled: true, errorMessage: null };
     }
 
